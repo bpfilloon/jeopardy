@@ -31,17 +31,17 @@ let categories = [];
 async function getCategoryIds() {
 
     const res = await axios.get('http://jservice.io//api/categories?count=100');
-    const ids = res.data.map(cat => ({
+    const id = res.data.map(cat => ({
           id: cat.id,
         
        
     }))
     
-    let sortedIDs = _.sampleSize(ids, [n=6]);
+    let sortedIDs = _.sampleSize(id, [n=6]);
     
     return sortedIDs
 
-
+    
 
 /** Return object with data about a category:
  *
@@ -55,9 +55,9 @@ async function getCategoryIds() {
  *   ]
  */
  }
- 
- const ids = getCategoryIds();
- console.log(ids);
+ const ids = await getCategoryIds();
+
+//  console.log(ids);
 
 //  console.log(categories);
 
@@ -66,7 +66,7 @@ async function getCategory(ids) {
         let res = await axios.get('http://jservice.io//api/clues')
             params: {
                 category: ids
-            };
+            }
 
            let catData = res.data.map(clues => ({
             title: clues.title,
@@ -78,16 +78,17 @@ async function getCategory(ids) {
            return catData;
         } 
      
-    
-
-const catData = getCategory(ids);
+      
+ 
+const catData = await getCategory(ids);
 
     // https://www.htmlgoodies.com/beyond/css/working_w_tables_using_jquery.html
 
     // https://www.geeksforgeeks.org/how-to-add-table-row-in-a-table-using-jquery/
     
    
-
+    const container = $('document.body').append('<div id "container">hello</div>');   
+    // $(document.createElement('DIV')) 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
  * - The <thead> should be filled w/a <tr>, and a <td> for each category
@@ -96,10 +97,10 @@ const catData = getCategory(ids);
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-async function fillTable(container, categories) {
+async function fillTable(container, catData) {
 
     var table = $("<table/>").addClass('CSSTableGenerator');
-    $.each(categories, function(rowIndex, r) {
+    $.each(catData, function(rowIndex, r) {
         var row = $("<tr/>");
         $.each(r, function(colIndex, c) { 
             row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
