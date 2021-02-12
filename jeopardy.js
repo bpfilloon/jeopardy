@@ -30,7 +30,7 @@ let categories = [];
 
 async function getCategoryIds() {
 
-    const res = await axios.get('http://jservice.io//api/categories?count=100');
+    const res = await axios.get('http://jservice.io/api/categories?count=100');
     const id = res.data.map(cat => ({
           id: cat.id,
         
@@ -42,7 +42,7 @@ async function getCategoryIds() {
     return sortedIDs
 
     
-
+    
 /** Return object with data about a category:
  *
  *  Returns { title: "Math", clues: clue-array }
@@ -55,40 +55,50 @@ async function getCategoryIds() {
  *   ]
  */
  }
- const ids = await getCategoryIds();
+ 
+  
+const ids = getCategoryIds();
+ console.log(ids);
 
-//  console.log(ids);
 
-//  console.log(categories);
+ const categories1  = getCategory();
+        
+ console.log(categories1);
 
 async function getCategory(ids) {
-    
-        let res = await axios.get('http://jservice.io//api/clues')
-            params: {
-                category: ids
-            }
+    let clues = [];
+    let promises = [];
+    for(let i=1; i < ids.length; i++){
+        promises.push(
+         await axios.get('http://jservice.io/api/category/' + ids[i]).then
+         (response => {
+            clues.push(response.data);
 
-           let catData = res.data.map(clues => ({
-            title: clues.title,
-            question: clues.question, 
-            answer: clues.answer, 
-            showing: null, 
-           }))
-        
-           return catData;
-        } 
-     
+         })
+        )
+    }
+        Promise.all(promises).then(() => console.log(clues));
+        //    const catData = result.data.map(clue => ({
+        //     title: clue.title,
+        //     question: clue.question, 
+        //     answer: clue.answer, 
+        //     showing: null, 
+        //    }))
       
- 
-const catData = await getCategory(ids);
+           return clues
+        } 
+        console.log(clues);
+   
+
+        
 
     // https://www.htmlgoodies.com/beyond/css/working_w_tables_using_jquery.html
 
     // https://www.geeksforgeeks.org/how-to-add-table-row-in-a-table-using-jquery/
     
    
-    const container = $('document.body').append('<div id "container">hello</div>');   
-    // $(document.createElement('DIV')) 
+      
+    const container = $( "<div id=><p>Hello</p></div>" ).appendTo( "body" )
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
  * - The <thead> should be filled w/a <tr>, and a <td> for each category
@@ -99,19 +109,20 @@ const catData = await getCategory(ids);
 
 async function fillTable(container, catData) {
 
-    var table = $("<table/>").addClass('CSSTableGenerator');
-    $.each(catData, function(rowIndex, r) {
-        var row = $("<tr/>");
-        $.each(r, function(colIndex, c) { 
-            row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
-        });
-        table.append(row);
-    });
-    return container.append(table);
+    // var table = $("<table/>").addClass('CSSTableGenerator');
+    // $.each(catData, function(rowIndex, r) {
+    //     var row = $("<tr/>");
+    //     $.each(r, function(colIndex, c) { 
+    //         row.append($("<t"+(rowIndex == 0 ?  "h" : "d")+"/>").text(c));
+    //     });
+    //     table.append(row);
+    // });
+    // return container.append(table);
 
 
 }
-
+// const table = (fillTable(conatiner, catData));
+// console.log(fillTable);
 /** Handle clicking on a clue: show the question or answer.
  *
  * Uses .showing property on clue to determine what to show:
