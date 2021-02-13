@@ -29,6 +29,17 @@ let categories = [];
 
 
 async function getCategoryIds() {
+    /** Return object with data about a category:
+     *
+     *  Returns { title: "Math", clues: clue-array }
+     *
+     * Where clue-array is:
+     *   [
+     *      {question: "Hamlet Author", answer: "Shakespeare", showing: null},
+     *      {question: "Bell Jar Author", answer: "Plath", showing: null},
+     *      ...
+     *   ]
+     */
 
     const res = await axios.get('http://jservice.io/api/categories?count=100');
     const id = res.data.map(cat => ({
@@ -40,54 +51,43 @@ async function getCategoryIds() {
     let sortedIDs = _.sampleSize(id, [n=6]);
     
     return sortedIDs
-
-    
-    
-/** Return object with data about a category:
- *
- *  Returns { title: "Math", clues: clue-array }
- *
- * Where clue-array is:
- *   [
- *      {question: "Hamlet Author", answer: "Shakespeare", showing: null},
- *      {question: "Bell Jar Author", answer: "Plath", showing: null},
- *      ...
- *   ]
- */
- }
+}
  
-  
-const ids = getCategoryIds();
- console.log(ids);
+async function test() {
+    const ids = await getCategoryIds();
+    console.log(ids);
 
+    const categories1  = await getCategory(ids);
+           
+    console.log(categories1);
+}
 
- const categories1  = getCategory();
-        
- console.log(categories1);
 
 async function getCategory(ids) {
     let clues = [];
     let promises = [];
     for(let i=1; i < ids.length; i++){
         promises.push(
-         await axios.get('http://jservice.io/api/category/' + ids[i]).then
+         await axios.get('http://jservice.io/api/category?id=' + ids[i].id).then
          (response => {
+            console.log(response.data)
             clues.push(response.data);
-
          })
         )
     }
-        Promise.all(promises).then(() => console.log(clues));
-        //    const catData = result.data.map(clue => ({
-        //     title: clue.title,
-        //     question: clue.question, 
-        //     answer: clue.answer, 
-        //     showing: null, 
-        //    }))
-      
-           return clues
-        } 
+    
+    Promise.all(promises).then(() => console.log(clues));
+    //    const catData = result.data.map(clue => ({
+    //     title: clue.title,
+    //     question: clue.question, 
+    //     answer: clue.answer, 
+    //     showing: null, 
+    //    }))
+    
+        return clues
         console.log(clues);
+
+    } 
    
 
         
