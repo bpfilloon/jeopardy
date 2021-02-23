@@ -68,36 +68,46 @@ async function test() {
     // const [{title}] = categories;
     // for (let i = 0; i < categories.length; i++){
     //     title[i]
-      
+    const table = await fillTable();
+    console.log(table);  
     
 }
 
 
 async function getCategory(ids) {
-    let clues = [];
-    let promises = [];
+    // let clues = [];
+    // let promises = [];
     for(let i=1; i < ids.length; i++){
-        promises.push(
-         await axios.get('http://jservice.io/api/category?id=' + ids[i].id).then
-         (response => {
+        // promises.push(
+       await axios.get('http://jservice.io/api/category?id=' + ids[i].id)
+         .then(response => {
             console.log(response.data)
             categories.push(response.data);
-         })
-        )
-    }
+            // const catData = response.data.map(clue => ({
+            //     title: clue.title,
+            //     question: clue.question, 
+            //     answer: clue.answer, 
+            //     showing: null, 
+            })
+            }
+         }
+       
     
-    Promise.all(promises).then(() => console.log(clues));
-    //    const catData = result.data.map(clue => ({
-    //     title: clue.title,
-    //     question: clue.question, 
-    //     answer: clue.answer, 
-    //     showing: null, 
-    //    }))
+        //  (response => {
+           
+           
+           
+            
+         
+
+
     
+    // Promise.all(promises).then(() => console.log(clues));
+ 
        
         // console.log(clues);
 
-    } 
+     
    
 
         
@@ -117,8 +127,24 @@ async function getCategory(ids) {
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-async function fillTable(container, catData) {
+async function fillTable() {
 
+
+    let table = '';
+    let rows = 6;
+    let cols = 6;
+    for(let r = 0; r < rows;r++)
+    {
+        table += '<tr>';
+        for(let c = 1; c <= cols; c++)
+        {
+            table += '<td>' + '?' + '</td>';
+
+        }
+        table += '</tr>';
+    }
+    document.write('<table border=2>' + table + '</table>');
+}
     // var table = $("<table/>").addClass('CSSTableGenerator');
     // $.each(catData, function(rowIndex, r) {
     //     var row = $("<tr/>");
@@ -130,7 +156,7 @@ async function fillTable(container, catData) {
     // return container.append(table);
 
 
-}
+
 // const table = (fillTable(conatiner, catData));
 // console.log(fillTable);
 /** Handle clicking on a clue: show the question or answer.
