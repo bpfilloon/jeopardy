@@ -25,90 +25,28 @@ let categories = [];
  */
 //  * Returns array of category ids
 //  */
-
-
-
-async function getCategoryIds() {
-    /** Return object with data about a category:
-     *
-     *  Returns { title: "Math", clues: clue-array }
-     *
-     * Where clue-array is:
-     *   [
-     *      {question: "Hamlet Author", answer: "Shakespeare", showing: null},
-     *      {question: "Bell Jar Author", answer: "Plath", showing: null},
-     *      ...
-     *   ]
-     */
-
-    const res = await axios.get('http://jservice.io/api/categories?count=100');
-    const id = res.data.map(cat => ({
-          id: cat.id,
-        
-       
-    }))
-    
-    let sortedIDs = _.sampleSize(id, [n=6]);
-    
-    return sortedIDs
-}
- 
-async function test() {
-    const ids = await getCategoryIds();
-    console.log(ids);
-
-    const categories1  = await getCategory(ids);
-           
-    console.log(categories1);
-
-
-    for (const {clues:[{question}]} of categories) {
-        console.log('question: ' + question);
-    }
-    // const [{title}] = categories;
-    // for (let i = 0; i < categories.length; i++){
-    //     title[i]
-    const table = await fillTable();
-    console.log(table);  
-    
-}
-
-
-async function getCategory(ids) {
-    // let clues = [];
-    // let promises = [];
-    for(let i=1; i < ids.length; i++){
-        // promises.push(
-       await axios.get('http://jservice.io/api/category?id=' + ids[i].id)
-         .then(response => {
-            console.log(response.data)
-            categories.push(response.data);
-            // const catData = response.data.map(clue => ({
-            //     title: clue.title,
-            //     question: clue.question, 
-            //     answer: clue.answer, 
-            //     showing: null, 
-            })
-            }
-         }
-       
-    
-        //  (response => {
-           
-           
-           
-            
-         
-
-
-    
-    // Promise.all(promises).then(() => console.log(clues));
- 
-       
-        // console.log(clues);
-
-     
-   
+const getCategoryIds = async () => {
+    const response = await axios.get(`https://jservice.io/api/"`, {
+      params: { count: 100 },
+    });
+    const categoryIDs = response.data.map((category) => category.id);
+    return _.sampleSize(categoryIDs, categoryCount);
+  };
+  
+  const getCategory = async (categoryID) => {
+    const response = await axios.get(`https://jservice.io/api/category`, {
+      params: { id: `${categoryID}` },
+    });
+    const category = response.data;
+    const allClues = category.clues;
+    const fiveRandomClues = _.sampleSize(allClues, cluesCount);
+    const cluesFormatted = fiveRandomClues.map((clue) => ({
+      question: clue.question,
+      answer: clue.answer,
+      showing: null,
+    }));
+    return { title: category.title, clues: cluesFormatted };
+  };
 
         
 
@@ -118,7 +56,7 @@ async function getCategory(ids) {
     
    
       
-    const container = $( "<div id=><p>Hello</p></div>" ).appendTo( "body" )
+    // const container = $( "<div id=><p>Hello</p></div>" ).appendTo(class="table table-bordered border-primary)
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
  *
  * - The <thead> should be filled w/a <tr>, and a <td> for each category
@@ -127,24 +65,8 @@ async function getCategory(ids) {
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-async function fillTable() {
+async function fillTable(categories) {
 
-
-    let table = '';
-    let rows = 6;
-    let cols = 6;
-    for(let r = 0; r < rows;r++)
-    {
-        table += '<tr>';
-        for(let c = 1; c <= cols; c++)
-        {
-            table += '<td>' + '?' + '</td>';
-
-        }
-        table += '</tr>';
-    }
-    document.write('<table border=2>' + table + '</table>');
-}
     // var table = $("<table/>").addClass('CSSTableGenerator');
     // $.each(catData, function(rowIndex, r) {
     //     var row = $("<tr/>");
@@ -156,9 +78,11 @@ async function fillTable() {
     // return container.append(table);
 
 
-
+}
 // const table = (fillTable(conatiner, catData));
 // console.log(fillTable);
+
+
 /** Handle clicking on a clue: show the question or answer.
  *
  * Uses .showing property on clue to determine what to show:
